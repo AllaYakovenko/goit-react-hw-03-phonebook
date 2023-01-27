@@ -1,4 +1,74 @@
-export const App = () => {
+import React, { Component } from "react";
+import css from 'components/App.module.css';
+import ContactForm from './ContactForm/ContactForm';
+import Filter from './Filter/Filter';
+import ContactList from './ContactList/ContactList';
+import shortid from "shortid";
+
+class App extends Component {
+    state = {
+        contacts: [
+    {id: 'id-1', name: 'Rosie Simpson', number: ' 459-12-56'},
+    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+      ],
+       filter: '',
+    };
+    
+
+  formSubmitHandler = contact => {
+    const id = shortid.generate();
+    const contactObject = { ...contact, id };
+  if (
+      !this.state.contacts.find(
+        ({ name }) => name.toLocaleLowerCase() === contact.name.toLowerCase()
+      )
+    ) {
+      this.setState(({ contacts }) => ({
+        contacts: [...contacts, contactObject],
+      }));
+    } else {
+      alert(`${contact.name} is already in contacts.`);
+    }
+  };
+
+  filterContacts = () => {
+    return this.state.contacts.filter(contact =>
+      contact.name.toLowerCase().includes(this.state.filter.toLowerCase())
+    );
+  };
+
+  findContact = ({ currentTarget: {value} }) => {
+    this.setState({filter: value });
+  };
+
+  deleteContact = contactId => {
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(({ id }) => id !== contactId),
+      
+    }));
+  };
+
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+
+    if (parsedContacts) { 
+      this.setState({ contacts: parsedContacts });
+    };
+    console.log(parsedContacts);
+  };
+
+  componentDidUpdate(prevProps, prevState) { 
+    if (this.state.contacts !== prevState.contacts) { 
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+    console.log('prevState', prevState);
+    console.log('state', this.state);
+  };
+
+render(){  
   return (
     <div
       style={{
@@ -10,7 +80,26 @@ export const App = () => {
         color: '#010101'
       }}
     >
-      React homework template
+      <div>
+        <h1 className={css.title}>Phonebook</h1>
+        <ContactForm onSubmit={this.formSubmitHandler}/>
+        <h2 className={css.title}>Contacts</h2>
+        <Filter
+          value={this.state.filter}
+          onChange={this.findContact}
+        />
+        {this.state.contacts.length === 0 ?
+          (<p className={css.messageUser}>There are no contacts in the Phonebook</p>
+          ) : (
+            <ContactList
+              contacts={this.filterContacts()}
+              onDeleteContact={this.deleteContact}
+        />
+          )}
+      </div>
     </div>
   );
 };
+};  
+
+export default App;
