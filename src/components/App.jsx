@@ -57,22 +57,18 @@ class App extends Component {
     if (parsedContacts) { 
       this.setState({ contacts: parsedContacts });
     };
-    console.log(parsedContacts);
   };
 
   componentDidUpdate(prevProps, prevState) { 
     if (this.state.contacts !== prevState.contacts) { 
       localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
     }
-    console.log('prevState', prevState);
-    console.log('state', this.state);
   };
 
 render(){  
   return (
     <div
       style={{
-        height: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

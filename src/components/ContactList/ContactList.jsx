@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 const ContactList = ({ contacts, onDeleteContact }) => (
     <ul className={ css.contactList}>
-        {contacts.map((contact, id) => (
+        {contacts.map((contact) => (
             <li
                 key={contact.id}
                 className={css.item}>
